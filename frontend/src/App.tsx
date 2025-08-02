@@ -8,6 +8,7 @@ import { AgentNode } from './components/AgentNode';
 import { AddNodeButton } from './components/AddNodeButton';
 import { NodeToolbar } from './components/NodeToolbar';
 import { initialNodes, initialEdges } from './data/initialData';
+import { wouldCreateCycle } from './utils/cycleDetection';
 
 const nodeTypes = {
   AgentNode: AgentNode,
@@ -18,10 +19,23 @@ function App() {
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [nodeId, setNodeId] = useState(2);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
+  const [showCycleWarning, setShowCycleWarning] = useState(false);
 
   const onConnect = useCallback(
-    (params: Connection) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges],
+    (params: Connection) => {
+      // Check if this connection would create a cycle
+      if (params.source && params.target) {
+        if (wouldCreateCycle(nodes, edges, params.source, params.target)) {
+          setShowCycleWarning(true);
+          // Hide warning after 3 seconds
+          setTimeout(() => setShowCycleWarning(false), 3000);
+          return; // Prevent the connection
+        }
+      }
+      
+      setEdges((eds) => addEdge(params, eds));
+    },
+    [setEdges, nodes, edges],
   );
 
   const addNode = useCallback(() => {
@@ -79,6 +93,27 @@ function App() {
         onUpdateNode={updateNode}
         onClose={closeToolbar}
       />
+      
+      {/* Cycle Warning */}
+      {showCycleWarning && (
+        <div style={{
+          position: 'absolute',
+          top: '60px',
+          right: '10px',
+          zIndex: 1000,
+          backgroundColor: '#fef2f2',
+          border: '2px solid #fecaca',
+          borderRadius: '8px',
+          padding: '15px 20px',
+          color: '#dc2626',
+          fontWeight: 'bold',
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+          maxWidth: '300px',
+        }}>
+          ⚠️ Cannot create cycle in agent flow
+        </div>
+      )}
+      
       <ReactFlow
         nodes={nodes}
         edges={edges}
