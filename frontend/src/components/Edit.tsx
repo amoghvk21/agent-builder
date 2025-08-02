@@ -56,7 +56,7 @@ function Edit() {
     setNodeId((prev) => prev + 1);
   }, [nodeId, setNodes]);
 
-  const onNodeClick = useCallback((event: any, node: Node) => {
+  const onNodeClick = useCallback((_event: any, node: Node) => {
     setSelectedNode(node);
   }, []);
 
