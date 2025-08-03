@@ -7,6 +7,7 @@ import '@xyflow/react/dist/style.css';
 import { AgentNode } from './AgentNode';
 import { AddNodeButton } from './AddNodeButton';
 import { NodeToolbar } from './NodeToolbar';
+import { Prompt } from './Prompt';
 import { initialNodes, initialEdges } from '../data/initialData';
 import { wouldCreateCycle } from '../utils/cycleDetection';
 
@@ -43,7 +44,7 @@ function Edit() {
       id: nodeId.toString(),
       type: 'AgentNode',
       data: { 
-        id: `agent-${nodeId.toString().padStart(3, '0')}`,
+        id: nodeId.toString(),
         agent_name: `Agent ${nodeId}`,
         system_prompt: `This is the system prompt for Agent ${nodeId}. You can customize this prompt to define the agent's behavior and capabilities.`
       },
@@ -93,6 +94,7 @@ function Edit() {
         onUpdateNode={updateNode}
         onClose={closeToolbar}
       />
+      <Prompt nodes={nodes} edges={edges} />
       
       {/* Cycle Warning */}
       {showCycleWarning && (
