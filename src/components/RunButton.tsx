@@ -28,7 +28,7 @@ async function runButtonHandle(
       system_prompt: node.data.system_prompt || ''
     })));
     
-    const response = await fetch('http://localhost:8000/api/prompt/', {
+    const response = await fetch('/api/prompt/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
