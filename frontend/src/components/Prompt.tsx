@@ -9,6 +9,7 @@ interface PromptProps {
 export function Prompt({ nodes, edges }: PromptProps) {
   const [prompt, setPrompt] = useState('');
   const [response, setResponse] = useState('');
+  const [apiKey, setApiKey] = useState('');
 
   return (
     <div style={{
@@ -37,18 +38,20 @@ export function Prompt({ nodes, edges }: PromptProps) {
         <h3 style={{ margin: 0, color: '#1f2937' }}>Prompt & Response</h3>
       </div>
 
-      <div >
+      <div>
         <label style={{
           display: 'block',
           marginBottom: '5px',
           fontWeight: 'bold',
           color: '#374151',
         }}>
-            API Key:
+          API Key:
         </label>
         <input 
-        type='text' 
-        style={{
+          type='text' 
+          value={apiKey}
+          onChange={(e) => setApiKey(e.target.value)}
+          style={{
             width: '100%',
             padding: '10px 12px',
             border: '1px solid #d1d5db',
@@ -60,7 +63,7 @@ export function Prompt({ nodes, edges }: PromptProps) {
             boxSizing: 'border-box',
             marginBottom: '20px'
           }}
-        placeholder='Enter API key'
+          placeholder='Enter API key'
         />
       </div>
 
@@ -91,12 +94,13 @@ export function Prompt({ nodes, edges }: PromptProps) {
         />
       </div>
 
-      <div style={{
-        display: 'flex',
-        gap: '10px',
-        justifyContent: 'center',
-      }}>
-      </div>
+      <RunButton 
+        nodes={nodes} 
+        edges={edges} 
+        prompt={prompt}
+        apiKey={apiKey}
+        onResponse={setResponse}
+      />
 
       <div style={{ marginBottom: '15px' }}>
         <label style={{
@@ -123,7 +127,6 @@ export function Prompt({ nodes, edges }: PromptProps) {
           {response || 'Response will appear here when you run the flow...'}
         </div>
       </div>
-      <RunButton nodes={nodes} edges={edges} />
     </div>
   );
 } 

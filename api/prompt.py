@@ -3,8 +3,6 @@ from crewai import Agent, Task, Crew, Process
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 
-load_dotenv()
-
 # Initialize the FastAPI app
 app = FastAPI(
     title="CrewAI Sequential Agent API",

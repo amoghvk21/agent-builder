@@ -1,41 +1,74 @@
 import type { Edge, Node } from '@xyflow/react';
 
-async function runButtonHandle(nodes: Node[], edges: Edge[]) {
-    const new_nodes = nodes.map((node) => node.data);
-
-    const response = await fetch('/api/prompt', {
-        method: 'POST', 
-        body: JSON.stringify({nodes: nodes, edges: edges, prompt: ''})
-    })
+interface RunButtonProps {
+  nodes: Node[];
+  edges: Edge[];
+  prompt: string;
+  apiKey: string;
+  onResponse: (response: string) => void;
 }
 
+async function runButtonHandle(
+  nodes: Node[], 
+  edges: Edge[], 
+  prompt: string, 
+  apiKey: string,
+  onResponse: (response: string) => void
+) {
+  try {
+    // Show loading state
+    onResponse('Running...');
+    
+    const response = await fetch('/api/prompt', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        nodes: nodes.map(node => node.data),
+        edges: edges,
+        prompt: prompt,
+        api_key: apiKey
+      })
+    });
 
-function RunButton({nodes, edges}: {nodes: Node[], edges: Edge[]}) {
-    return (
-        <div>
-            <button
-                onClick={() => runButtonHandle(nodes, edges)}
-                style={{
-                    padding: '10px 20px',
-                    fontSize: '16px',
-                    backgroundColor: 'rgb(0, 132, 255)',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '5px',
-                    cursor: 'pointer',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-                }}
-                onMouseOver={(e) => {
-                    e.currentTarget.style.backgroundColor = 'rgb(2, 111, 212)';
-                }}
-                onMouseOut={(e) => {
-                    e.currentTarget.style.backgroundColor = 'rgb(0, 132, 255)';
-                }}
-            >
-                Build + Run
-            </button>
-        </div>
-    )
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    onResponse(result.result || 'No response received');
+  } catch (error) {
+    console.error('Error running flow:', error);
+    onResponse(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
+}
+
+function RunButton({ nodes, edges, prompt, apiKey, onResponse }: RunButtonProps) {
+  return (
+    <div style={{
+      display: 'flex',
+      gap: '10px',
+      justifyContent: 'center',
+      marginBottom: '20px',
+    }}>
+      <button
+        onClick={() => runButtonHandle(nodes, edges, prompt, apiKey, onResponse)}
+        style={{
+          padding: '12px 24px',
+          backgroundColor: '#4CAF50',
+          color: 'white',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer',
+          fontSize: '14px',
+          fontWeight: 'bold',
+        }}
+      >
+        Build + Run
+      </button>
+    </div>
+  );
 }
 
 export default RunButton;
