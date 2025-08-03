@@ -1,6 +1,7 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from langchain_openai import ChatOpenAI
 import os
+from fastapi.middleware.cors import CORSMiddleware
 
 
 # Initialize the FastAPI app
@@ -9,8 +10,8 @@ app = FastAPI(
     description="An API to run a sequence of CrewAI agents.",
 )
 
-@app.post('/prompt/')
-async def prompt(request):
+@app.post('/api/prompt/')
+async def prompt(request: Request):
 
     try:
         # Get data
@@ -30,10 +31,9 @@ async def prompt(request):
         os.environ["OPENAI_API_KEY"] = api_key
         llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0.7)
 
-        current_context = request.main_prompt
-        final_result = ""
+        current_context = main_prompt
 
-        for i, agent_data in enumerate(agents):
+        for agent_data in agents:
             # Create prompt
             prompt = f"""
             You are part of a sequential multi agent network. 
@@ -48,7 +48,7 @@ async def prompt(request):
             response = llm.invoke(prompt)
             
             # output from this llm becomes context for the next one
-            current_context = response
+            current_context = response.content
         
         return {"result": current_context}
     
