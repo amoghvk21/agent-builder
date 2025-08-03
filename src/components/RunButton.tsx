@@ -1,4 +1,5 @@
 import type { Edge, Node } from '@xyflow/react';
+import { sortNodesSequentially } from '../utils/topologicalSort';
 
 interface RunButtonProps {
   nodes: Node[];
@@ -19,15 +20,25 @@ async function runButtonHandle(
     // Show loading state
     onResponse('Running...');
     
-    const response = await fetch('/api/prompt', {
+    // Sort nodes in sequential order based on edges
+    const sortedNodes = sortNodesSequentially(nodes, edges);
+    
+    console.log(sortedNodes.map(node => ({
+      agent_id: node.id,
+      system_prompt: node.data.system_prompt || ''
+    })));
+    
+    const response = await fetch('http://localhost:8000/api/prompt/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        nodes: nodes.map(node => node.data),
-        edges: edges,
-        prompt: prompt,
+        agents: sortedNodes.map(node => ({
+          agent_id: node.id,
+          system_prompt: node.data.system_prompt || ''
+        })),
+        main_prompt: prompt,
         api_key: apiKey
       })
     });
