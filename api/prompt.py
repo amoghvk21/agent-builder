@@ -10,21 +10,29 @@ app = FastAPI(
     description="An API to run a sequence of CrewAI agents.",
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Frontend URLs
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 @app.post('/api/prompt/')
 async def prompt(request: Request):
 
     try:
         # Get data
         body = await request.json()
-
+        
         agents = body.get('agents', [])
         main_prompt = body.get('main_prompt', '')
         api_key = body.get('api_key', '')
-        
-        if not agents:
-            return {"error": "Agent list cannot be empty."}
 
-        if not api_key:
+        if not agents or agents == []:
+            return {"error": "Agent list cannot be empty."}
+        
+        if not api_key or api_key == '':
             return {"error": "No API key provided."}
         
         # Initialise LLM
@@ -42,13 +50,15 @@ async def prompt(request: Request):
             ---
             {current_context}
             ---
+            Your response should only contain your response rather than a summary of the intermediate steps. It should be in pain english. 
             """
-
+            
             # Prompt llm
             response = llm.invoke(prompt)
-            
+
             # output from this llm becomes context for the next one
             current_context = response.content
+            print(current_context)
         
         return {"result": current_context}
     
