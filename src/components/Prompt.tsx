@@ -45,10 +45,10 @@ export function Prompt({ nodes, edges }: PromptProps) {
           fontWeight: 'bold',
           color: '#374151',
         }}>
-          API Key:
+          OpenAI API Key:
         </label>
         <input 
-          type='text' 
+          type='password' 
           value={apiKey}
           onChange={(e) => setApiKey(e.target.value)}
           style={{

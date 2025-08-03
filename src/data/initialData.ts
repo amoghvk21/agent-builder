@@ -9,7 +9,7 @@ export const initialNodes: Node[] = [
       agent_name: 'Assistant Agent',
       system_prompt: 'You are a helpful AI assistant that responds to user queries in a clear and concise manner.'
     },
-    position: { x: 250, y: 25 },
+    position: { x: 350, y: 350 },
   },
 ];
 

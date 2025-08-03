@@ -67,13 +67,19 @@ function RunButton({ nodes, edges, prompt, apiKey, onResponse }: RunButtonProps)
         onClick={() => runButtonHandle(nodes, edges, prompt, apiKey, onResponse)}
         style={{
           padding: '12px 24px',
-          backgroundColor: '#4CAF50',
+          backgroundColor: 'rgb(0, 140, 255)',
           color: 'white',
           border: 'none',
           borderRadius: '4px',
           cursor: 'pointer',
           fontSize: '14px',
           fontWeight: 'bold',
+        }}
+        onMouseOver={(e) => {
+          e.currentTarget.style.backgroundColor = 'rgb(0, 109, 199)';
+        }}
+        onMouseOut={(e) => {
+          e.currentTarget.style.backgroundColor = 'rgb(0, 140, 255)';
         }}
       >
         Build + Run

@@ -125,7 +125,6 @@ function Edit() {
         onNodeClick={onNodeClick}
         onPaneClick={onPaneClick}
         nodeTypes={nodeTypes}
-        fitView
       >
         <Controls />
         <Background />

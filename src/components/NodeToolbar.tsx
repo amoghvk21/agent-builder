@@ -59,7 +59,7 @@ export function NodeToolbar({ selectedNode, onUpdateNode, onClose }: NodeToolbar
         borderBottom: '1px solid #e5e7eb',
         paddingBottom: '10px',
       }}>
-        <h3 style={{ margin: 0, color: '#1f2937' }}>Edit Agent Node</h3>
+        <h3 style={{ margin: 0, color: '#1f2937' }}>Edit Agent</h3>
         <button
           onClick={onClose}
           style={{
@@ -70,7 +70,7 @@ export function NodeToolbar({ selectedNode, onUpdateNode, onClose }: NodeToolbar
             color: '#6b7280',
           }}
         >
-          ×
+          x
         </button>
       </div>
 
